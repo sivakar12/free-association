@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import styled from "styled-components"
 import { ThemeProvider, createGlobalStyle } from 'styled-components'
 
@@ -29,34 +29,51 @@ const Container = styled.div`
 
 
 const states = ['NOT_STARTED', 'IN_PROGRESS', 'COMPLETED'];
+const timeInSeconds = 20;
 
 function App() {
+  const [state, setState] = useState(states[0]);
   const [list, setList] = useState([]);
 
-  const handleInput = (value) => {
-    setList([...list, value]);
-  }
-
+  
   const colorScheme = useColorScheme();
-
+  
   const themeWithSchemeSelected = {
     ...theme,
     colorPalette: colorScheme === 'dark' ? theme.colorPaletteDark : theme.colorPalette,
   }
-
+  
   const GlobalStyle = createGlobalStyle`
-    body {
-      background-color: ${props => props.theme.colorPalette.background};
-      padding: ${props => props.theme.padding};
-    }
+  body {
+    background-color: ${props => props.theme.colorPalette.background};
+    padding: ${props => props.theme.padding};
+  }
   `
+
+  const handleInput = (value) => {
+    if (state === "NOT_STARTED") {
+      setState("IN_PROGRESS");
+    }
+    if (state === "IN_PROGRESS" || state === "NOT_STARTED") {
+      setList([...list, value]);
+    }
+  }
+
+  useEffect(() => {
+    if (state == "IN_PROGRESS") {
+      setTimeout(() => {
+        setState("COMPLETED");
+      }, timeInSeconds * 1000)
+    }
+  }, [state])
+
   return (
     <ThemeProvider theme={themeWithSchemeSelected}>
       <GlobalStyle/>
       <Container>
         <Title>Free Association</Title>
         <List list={list}/>
-        <Input onInput={handleInput}/>
+        <Input state={state} onInput={handleInput}/>
       </Container>
     </ThemeProvider>
   );

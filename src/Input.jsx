@@ -21,7 +21,7 @@ export default function Input(props) {
 
     const handleOnChange = (event) => {
         const { value } = event.target;
-        const regexForSingleWord = /^[a-zA-Z]+$/;
+        const regexForSingleWord = /^[a-zA-Z]*$/;
         if (!regexForSingleWord.test(value)) {
             setError('Please enter a single word');
         } else {
@@ -36,15 +36,28 @@ export default function Input(props) {
             setValue('');
         }
     }
+
+    let placeholder
+    switch (props.state) {
+        case "NOT_STARTED":
+            placeholder = "Enter a word to begin"
+            break
+        case "COMPLETED":
+            placeholder = "Game completed"
+            break
+        default:
+            placeholder = ""
+    }
     
     return (
         <div>
             <InputBox 
                 type="text" 
                 value={value} 
+                disabled={props.state === "COMPLETED"}
                 onChange={handleOnChange} 
                 onKeyDown={handleKeyDown}
-                placeholder="Enter a word"
+                placeholder={placeholder}
             />
         </div>
     );
