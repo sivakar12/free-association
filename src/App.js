@@ -63,16 +63,17 @@ function App() {
   }
 
   useEffect(() => {
-    if (state == "IN_PROGRESS") {
+    if (state === "IN_PROGRESS") {
       setTimeout(() => {
         setState("COMPLETED");
       }, timeInSeconds * 1000)
     }
-    if (state == "COMPLETED") {
+    if (state === "COMPLETED") {
       const sentiment = new Sentiment();
       const results = sentiment.analyze(list.join(' '));
       setResults(results)
     }
+  // eslint-disable-next-line
   }, [state])
 
   return (
