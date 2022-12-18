@@ -1,11 +1,14 @@
 import React, { useEffect, useState } from 'react'
 import styled from "styled-components"
 import { ThemeProvider, createGlobalStyle } from 'styled-components'
+import Sentiment from 'sentiment'
 
 import Input from "./Input"
 import List from "./List"
 import useColorScheme from "./useColorScheme"
 import * as theme from './theme'
+import Results from './Results'
+import Config from './Config'
 
 const Title = styled.h1`
   text-align: center;
@@ -20,7 +23,7 @@ const Container = styled.div`
   display: flex;
   flex-direction: column;
   align-items: stretch;
-  justify-content: stretch;
+  justify-content: space-between;
   height: 96vh;
   font-family: ${props => props.theme.font};
   background-color: ${props => props.theme.colorPalette.background};
@@ -29,12 +32,12 @@ const Container = styled.div`
 
 
 const states = ['NOT_STARTED', 'IN_PROGRESS', 'COMPLETED'];
-const timeInSeconds = 20;
+const timeInSeconds = 30;
 
 function App() {
   const [state, setState] = useState(states[0]);
   const [list, setList] = useState([]);
-
+  const [results, setResults] = useState({});
   
   const colorScheme = useColorScheme();
   
@@ -65,6 +68,11 @@ function App() {
         setState("COMPLETED");
       }, timeInSeconds * 1000)
     }
+    if (state == "COMPLETED") {
+      const sentiment = new Sentiment();
+      const results = sentiment.analyze(list.join(' '));
+      setResults(results)
+    }
   }, [state])
 
   return (
@@ -72,7 +80,9 @@ function App() {
       <GlobalStyle/>
       <Container>
         <Title>Free Association</Title>
-        <List list={list}/>
+        { state === "NOT_STARTED" && <Config/> }
+        { state === "IN_PROGRESS" && <List list={list}/> }
+        { state === "COMPLETED" && <Results results={results}/> }
         <Input state={state} onInput={handleInput}/>
       </Container>
     </ThemeProvider>
