@@ -24,7 +24,7 @@ const Container = styled.div`
   flex-direction: column;
   align-items: stretch;
   justify-content: space-between;
-  height: 96vh;
+  height: 100%;
   font-family: ${props => props.theme.font};
   background-color: ${props => props.theme.colorPalette.background};
   color: ${props => props.theme.colorPalette.text};
@@ -47,9 +47,10 @@ function App() {
   }
   
   const GlobalStyle = createGlobalStyle`
-  body {
+  html, body {
     background-color: ${props => props.theme.colorPalette.background};
-    padding: ${props => props.theme.padding};
+    padding: 0;
+    margin: 0;
   }
   `
 
@@ -62,6 +63,15 @@ function App() {
     }
   }
 
+  useEffect(() => {
+    function setElementHeight() {
+      const keyboardHeight = window.innerHeight - document.documentElement.clientHeight;
+      const element = document.getElementById('container');
+      element.style.height = `calc(100vh - ${keyboardHeight}px)`;
+    }
+    setElementHeight();
+    window.addEventListener('resize', setElementHeight);
+  }, [])
   useEffect(() => {
     if (state === "IN_PROGRESS") {
       setTimeout(() => {
@@ -79,7 +89,7 @@ function App() {
   return (
     <ThemeProvider theme={themeWithSchemeSelected}>
       <GlobalStyle/>
-      <Container>
+      <Container id="container">
         <Title>Free Association</Title>
         { state === "NOT_STARTED" && <Config/> }
         { state === "IN_PROGRESS" && <List list={list}/> }
