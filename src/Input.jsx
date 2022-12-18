@@ -43,7 +43,7 @@ export default function Input(props) {
             placeholder = "Enter a word to begin"
             break
         case "COMPLETED":
-            placeholder = "Game completed"
+            placeholder = "Session completed"
             break
         default:
             placeholder = ""
