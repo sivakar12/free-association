@@ -55,6 +55,7 @@ export default function Input(props) {
                 type="text" 
                 value={value} 
                 disabled={props.state === "COMPLETED"}
+                autoCapitalize="off"
                 onChange={handleOnChange} 
                 onKeyDown={handleKeyDown}
                 placeholder={placeholder}
