@@ -6,7 +6,6 @@ const ListBox = styled.div`
     flex-wrap: wrap;
     align-items: start;
     width: 100%;
-    height: 100%;
     overflow: auto;
 `
 
