@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useState, useRef } from 'react'
 import styled from 'styled-components'
 
 const InputBox = styled.input`
@@ -16,6 +16,7 @@ const InputBox = styled.input`
 `
 
 export default function Input(props) {
+
     const [error, setError] = useState('null');
     const [value, setValue] = useState('');
 

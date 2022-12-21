@@ -1,19 +1,15 @@
-import React, { useEffect, useState, useContext } from 'react'
+import React, { useContext } from 'react'
 import styled from "styled-components"
 import { ThemeProvider, createGlobalStyle } from 'styled-components'
-import Sentiment from 'sentiment'
 
 import { getAuth, GoogleAuthProvider, signInWithPopup } from "firebase/auth";
-import { getFirestore, collection, addDoc, Timestamp } from "firebase/firestore"; 
+import { BrowserRouter, Route, Link, Routes } from 'react-router-dom';
 
-import Input from "./Input"
-import List from "./List"
 import useColorScheme from "./useColorScheme"
 import * as theme from './theme'
-import Results from './Results'
-import Config from './Config'
-import { AuthProvider, AuthContext, db } from './firebase'
-
+import { AuthProvider, AuthContext } from './firebase'
+import History from './History';
+import Session from './Session';
 
 const TopBar = styled.div`
   display: flex;
@@ -31,7 +27,6 @@ const TopBarButton = styled.div`
   cursor: pointer;
 `
 
-
 const Title = styled.h1`
   text-align: center;
   font-size: ${props => props.theme.fontSizes[0]};
@@ -39,26 +34,16 @@ const Title = styled.h1`
   color: ${props => props.theme.colorPalette.text};
 `
 
-const Container = styled.div`
-  margin: 0;
-  display: flex;
-  flex-direction: column;
-  align-items: stretch;
-  justify-content: space-between;
-  height: 100%;
-  font-family: ${props => props.theme.font};
-  background-color: ${props => props.theme.colorPalette.background};
-  color: ${props => props.theme.colorPalette.text};
+const GlobalStyle = createGlobalStyle`
+  html, body {
+    background-color: ${props => props.theme.colorPalette.background};
+    padding: 0;
+    margin: 0;
+  }
 `
 
-
-const states = ['NOT_STARTED', 'IN_PROGRESS', 'COMPLETED'];
-const timeInSeconds = 30;
-
 function App() {
-  const [state, setState] = useState(states[0]);
-  const [list, setList] = useState([]);
-  const [results, setResults] = useState({});
+  
 
   const colorScheme = useColorScheme();
   
@@ -67,22 +52,6 @@ function App() {
     colorPalette: colorScheme === 'dark' ? theme.colorPaletteDark : theme.colorPalette,
   }
   
-  const GlobalStyle = createGlobalStyle`
-  html, body {
-    background-color: ${props => props.theme.colorPalette.background};
-    padding: 0;
-    margin: 0;
-  }
-  `
-
-  const handleInput = (value) => {
-    if (state === "NOT_STARTED") {
-      setState("IN_PROGRESS");
-    }
-    if (state === "IN_PROGRESS" || state === "NOT_STARTED") {
-      setList([...list, value]);
-    }
-  }
 
   const handleLogin = () => {
     const auth = getAuth();
@@ -95,42 +64,7 @@ function App() {
     auth.signOut();
   }
 
-  const saveSessionData = async () => {
-    const auth = getAuth();
-    const currentUser = auth.currentUser;
-    if (currentUser) {
-      const docRef = await addDoc(collection(db, "sessions"), {
-        user: currentUser.uid,
-        list: list,
-        timestamp: Timestamp.now(),
-      });
-    }
-  }
-
-  useEffect(() => {
-    function setElementHeight() {
-      const keyboardHeight = window.innerHeight - document.documentElement.clientHeight;
-      const element = document.getElementById('container');
-      element.style.height = `calc(100vh - ${keyboardHeight}px)`;
-    }
-    setElementHeight();
-    window.addEventListener('resize', setElementHeight);
-  }, [])
   
-  useEffect(() => {
-    if (state === "IN_PROGRESS") {
-      setTimeout(() => {
-        setState("COMPLETED");
-      }, timeInSeconds * 1000)
-    }
-    if (state === "COMPLETED") {
-      saveSessionData();
-      const sentiment = new Sentiment();
-      const results = sentiment.analyze(list.join(' '));
-      setResults(results)
-    }
-  // eslint-disable-next-line
-  }, [state])
 
   const LoginButtonArea = () => {
     const { currentUser } = useContext(AuthContext);
@@ -145,23 +79,28 @@ function App() {
     }
   }
 
+
   return (
+    <BrowserRouter>
     <AuthProvider>
       <ThemeProvider theme={themeWithSchemeSelected}>
         <GlobalStyle/>
-        <Container id="container">
           <TopBar>
-            <TopBarButton>History</TopBarButton>
-            <Title>Free Association</Title>
+            <Link to="/history">
+              <TopBarButton>History</TopBarButton>
+            </Link>
+            <Link to="/">
+              <Title>Free Association</Title>
+            </Link>
             <LoginButtonArea/>
           </TopBar>
-          { state === "NOT_STARTED" && <Config/> }
-          { state === "IN_PROGRESS" && <List list={list}/> }
-          { state === "COMPLETED" && <Results results={results}/> }
-          <Input state={state} onInput={handleInput}/>
-        </Container>
+          <Routes>
+            <Route path="/" element={<Session/>}/>
+            <Route path="/history" element={<History/>} />
+          </Routes>
       </ThemeProvider>
     </AuthProvider>
+    </BrowserRouter>
   );
 }
 
