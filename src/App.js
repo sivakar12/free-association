@@ -4,6 +4,7 @@ import { ThemeProvider, createGlobalStyle } from 'styled-components'
 import Sentiment from 'sentiment'
 
 import { getAuth, GoogleAuthProvider, signInWithPopup } from "firebase/auth";
+import { getFirestore, collection, addDoc, Timestamp } from "firebase/firestore"; 
 
 import Input from "./Input"
 import List from "./List"
@@ -11,7 +12,8 @@ import useColorScheme from "./useColorScheme"
 import * as theme from './theme'
 import Results from './Results'
 import Config from './Config'
-import { AuthProvider, AuthContext } from './firebase'
+import { AuthProvider, AuthContext, db } from './firebase'
+
 
 const TopBar = styled.div`
   display: flex;
@@ -93,6 +95,18 @@ function App() {
     auth.signOut();
   }
 
+  const saveSessionData = async () => {
+    const auth = getAuth();
+    const currentUser = auth.currentUser;
+    if (currentUser) {
+      const docRef = await addDoc(collection(db, "sessions"), {
+        user: currentUser.uid,
+        list: list,
+        timestamp: Timestamp.now(),
+      });
+    }
+  }
+
   useEffect(() => {
     function setElementHeight() {
       const keyboardHeight = window.innerHeight - document.documentElement.clientHeight;
@@ -102,6 +116,7 @@ function App() {
     setElementHeight();
     window.addEventListener('resize', setElementHeight);
   }, [])
+  
   useEffect(() => {
     if (state === "IN_PROGRESS") {
       setTimeout(() => {
@@ -109,6 +124,7 @@ function App() {
       }, timeInSeconds * 1000)
     }
     if (state === "COMPLETED") {
+      saveSessionData();
       const sentiment = new Sentiment();
       const results = sentiment.analyze(list.join(' '));
       setResults(results)
