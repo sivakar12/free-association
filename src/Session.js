@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import Sentiment from 'sentiment'
-import { getFirestore, collection, addDoc, Timestamp } from "firebase/firestore"; 
+import { collection, addDoc, Timestamp } from "firebase/firestore"; 
 import { getAuth } from "firebase/auth";
 import styled from "styled-components";
 
@@ -37,7 +37,7 @@ export default function Session() {
         const auth = getAuth();
         const currentUser = auth.currentUser;
         if (currentUser) {
-          const docRef = await addDoc(collection(db, "sessions"), {
+          await addDoc(collection(db, "sessions"), {
             user: currentUser.uid,
             list: list,
             timestamp: Timestamp.now(),
