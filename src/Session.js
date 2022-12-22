@@ -24,7 +24,7 @@ const Container = styled.div`
 
 
 const states = ['NOT_STARTED', 'IN_PROGRESS', 'COMPLETED'];
-const timeInSeconds = 30;
+const timeInSeconds = 90;
 
 export default function Session() {
 
