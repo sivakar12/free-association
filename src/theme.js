@@ -20,7 +20,7 @@ export const colorPaletteDark = {
 
 export const padding = '10px'
 
-export const fontSizes = [40, 16, 16]
+export const fontSizes = [40, 20, 16]
 
 export const font = 'Times New Roman'
 

@@ -8,25 +8,47 @@ import { Link } from "react-router-dom";
 
 const Title = styled.h3`
     text-align: center;
+    margin: 0;
     font-size: ${props => props.theme.fontSizes[0]};
     background-color: ${props => props.theme.colorPalette.background2};
     color: ${props => props.theme.colorPalette.text};
 `
 
 const SessionItem = styled.div`
+    margin: 10px;
     background-color: ${props => props.theme.colorPalette.background2};
+    border-radius: ${props => props.theme.borderRadius};
     color: ${props => props.theme.colorPalette.text};
     cursor: pointer;
 `
 
+const SessionItemDate = styled.div`
+    padding: 4px;
+    font-size: ${props => props.theme.fontSizes[2]};
+`
+
+const SessionItemWords = styled.div`
+    display: flex;
+    width: 100%;
+    overflow-x: scroll;
+`
+
+const SessionItemWord = styled.div`
+    padding: 4px;
+    margin: 4px;
+    border-radius: ${props => props.theme.borderRadius};
+    border: 1px solid ${props => props.theme.colorPalette.accent};
+    background-color: ${props => props.theme.colorPalette.background};
+    font-size: ${props => props.theme.fontSizes[0]};
+`
 const Session = (props) => {
     return (
-        <Link to={props.session.id}>
-            <SessionItem>
-                <p>{new Date(props.session.timestamp.seconds * 1000).toISOString()}</p>
-                <p style={{'wordWrap': 'break-word'}}>{props.session.list.toString()}</p>
-            </SessionItem>
-        </Link>
+        <SessionItem>
+            <SessionItemDate>{new Date(props.session.timestamp.seconds * 1000).toISOString()}</SessionItemDate>
+            <SessionItemWords>
+                {props.session.list.map((word, index) => <SessionItemWord key={index}>{word}</SessionItemWord>)}
+            </SessionItemWords>
+        </SessionItem>
     )
 }
 
