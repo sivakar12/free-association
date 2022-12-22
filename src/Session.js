@@ -17,7 +17,6 @@ const Container = styled.div`
   flex-direction: column;
   align-items: stretch;
   justify-content: space-between;
-  height: 70vh;
   background-color: ${props => props.theme.colorPalette.background};
   color: ${props => props.theme.colorPalette.text};
 `
