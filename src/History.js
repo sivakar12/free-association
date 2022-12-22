@@ -1,10 +1,13 @@
 import React, { useContext, useEffect, useState } from "react";
 import styled from "styled-components";
+import dayjs from "dayjs";
+import relativeType from "dayjs/plugin/relativeTime";
 
 import { getDocs, collection, query, where, orderBy, limit } from "firebase/firestore"; 
 
 import { AuthContext, db } from "./firebase";
-import { Link } from "react-router-dom";
+
+dayjs.extend(relativeType)
 
 const Title = styled.h3`
     text-align: center;
@@ -41,10 +44,14 @@ const SessionItemWord = styled.div`
     background-color: ${props => props.theme.colorPalette.background};
     font-size: ${props => props.theme.fontSizes[0]};
 `
+
+const formatTimestamp = (timestamp) => {
+    return dayjs(timestamp).fromNow() + " (" + dayjs(timestamp).format("MMMM D, YYYY h:mm A	") + ")";
+}
 const Session = (props) => {
     return (
         <SessionItem>
-            <SessionItemDate>{new Date(props.session.timestamp.seconds * 1000).toISOString()}</SessionItemDate>
+            <SessionItemDate>{formatTimestamp(props.session.timestamp.seconds * 1000)}</SessionItemDate>
             <SessionItemWords>
                 {props.session.list.map((word, index) => <SessionItemWord key={index}>{word}</SessionItemWord>)}
             </SessionItemWords>
