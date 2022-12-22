@@ -22,6 +22,7 @@ export const padding = '10px'
 
 export const fontSizes = [40, 20, 16]
 
-export const font = 'Times New Roman'
+// export const font = 'Times New Roman'
+export const font = 'Calibri'
 
 export const borderRadius = '5px'

@@ -5,9 +5,10 @@ import { ThemeProvider, createGlobalStyle } from 'styled-components'
 import { getAuth, GoogleAuthProvider, signInWithPopup } from "firebase/auth";
 import { BrowserRouter, Route, Link, Routes } from 'react-router-dom';
 
-import useColorScheme from "./useColorScheme"
-import * as theme from './theme'
-import { AuthProvider, AuthContext } from './firebase'
+import './style.css';
+import useColorScheme from "./useColorScheme";
+import * as theme from './theme';
+import { AuthProvider, AuthContext } from './firebase';
 import History from './History';
 import Session from './Session';
 
@@ -39,6 +40,7 @@ const GlobalStyle = createGlobalStyle`
     background-color: ${props => props.theme.colorPalette.background};
     padding: 0;
     margin: 0;
+    font-family: ${props => props.theme.font};
   }
 `
 
